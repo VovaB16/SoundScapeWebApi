@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using SoundScape.Data;
 using SoundScape.Models;
@@ -11,11 +12,13 @@ namespace SoundScape.Controllers
     [Route("api/[controller]")]
     public class AuthController : Controller
     {
+        private readonly IConfiguration _configuration;
         private readonly ApplicationDbContext _dbContext;
 
-        public AuthController(ApplicationDbContext dbContext)
+        public AuthController(ApplicationDbContext dbContext, IConfiguration configuration)
         {
             _dbContext = dbContext;
+            _configuration = configuration;
         }
 
         [HttpPost("register")]
@@ -54,23 +57,25 @@ namespace SoundScape.Controllers
 
         private string GenerateJwtToken(User user)
         {
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("Your_Secret_Key_Here"));
+            var secretKey = _configuration["Jwt:Key"];
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             var claims = new[]
             {
-            new Claim(JwtRegisteredClaimNames.Sub, user.Username),
-            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-        };
+        new Claim(JwtRegisteredClaimNames.Sub, user.Username),
+        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+    };
 
             var token = new JwtSecurityToken(
-                issuer: "YourIssuer",
-                audience: "YourAudience",
+                issuer: "https://localhost:7179",
+                audience: "https://clientapp.com",
                 claims: claims,
                 expires: DateTime.UtcNow.AddHours(1),
                 signingCredentials: creds);
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
+
     }
 }
