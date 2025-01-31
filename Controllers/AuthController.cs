@@ -63,16 +63,18 @@ namespace SoundScape.Controllers
 
             var claims = new[]
             {
-        new Claim(JwtRegisteredClaimNames.Sub, user.Username),
-        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+        new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()), // Замість user.Username додай user.Id
+        new Claim(JwtRegisteredClaimNames.UniqueName, user.Username), // Зберігає ім'я користувача
+        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()) // Унікальний ідентифікатор токена
     };
 
             var token = new JwtSecurityToken(
-                issuer: "https://localhost:7179",
-                audience: "https://clientapp.com",
+                issuer: "https://localhost:7179", // Існуючий issuer
+                audience: "https://clientapp.com", // Існуючий audience
                 claims: claims,
                 expires: DateTime.UtcNow.AddHours(1),
-                signingCredentials: creds);
+                signingCredentials: creds
+            );
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
