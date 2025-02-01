@@ -17,9 +17,9 @@ namespace SoundScape.Controllers
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             var jwtId = User.FindFirst(JwtRegisteredClaimNames.Jti)?.Value;
             var username = User.Identity?.Name;
+            var email = HttpContext.Items["Email"]?.ToString();
 
-
-            return Ok(new { userId, jwtId, username });
+            return Ok(new { userId, jwtId, username, email });
         }
     }
 }

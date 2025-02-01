@@ -33,13 +33,14 @@ namespace SoundScape.Controllers
             var user = new User
             {
                 Username = model.Username,
+                Email = model.Email,
                 PasswordHash = hashedPassword
             };
 
             _dbContext.Users.Add(user);
             await _dbContext.SaveChangesAsync();
 
-            return Ok("Реєстрація успішна.");
+            return Ok(new { Message = "Реєстрація успішна.", Email = user.Email });
         }
 
         [HttpPost("login")]
@@ -63,14 +64,15 @@ namespace SoundScape.Controllers
 
             var claims = new[]
             {
-        new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()), // Замість user.Username додай user.Id
-        new Claim(JwtRegisteredClaimNames.UniqueName, user.Username), // Зберігає ім'я користувача
-        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()) // Унікальний ідентифікатор токена
+        new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
+        new Claim(JwtRegisteredClaimNames.UniqueName, user.Username),
+        new Claim(JwtRegisteredClaimNames.Email, user.Email),
+        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
     };
 
             var token = new JwtSecurityToken(
-                issuer: "https://localhost:7179", // Існуючий issuer
-                audience: "https://clientapp.com", // Існуючий audience
+                issuer: _configuration["Jwt:Issuer"],
+                audience: _configuration["Jwt:Audience"],
                 claims: claims,
                 expires: DateTime.UtcNow.AddHours(1),
                 signingCredentials: creds

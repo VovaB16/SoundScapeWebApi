@@ -24,7 +24,7 @@ public class JwtMiddleware
         await _next(context);
     }
 
-    private async void AttachUserToContext(HttpContext context, ApplicationDbContext dbContext, string token)
+    private void AttachUserToContext(HttpContext context, ApplicationDbContext dbContext, string token)
     {
         try
         {
@@ -41,14 +41,18 @@ public class JwtMiddleware
 
             var jwtToken = (JwtSecurityToken)validatedToken;
             var userId = int.Parse(jwtToken.Claims.First(x => x.Type == JwtRegisteredClaimNames.Sub).Value);
+            var email = jwtToken.Claims.First(x => x.Type == JwtRegisteredClaimNames.Email).Value;
 
-            context.Items["User"] = dbContext.Users.Find(userId);
+            var user = dbContext.Users.Find(userId);
+            if (user != null && user.Email == email)
+            {
+                context.Items["User"] = user;
+                context.Items["Email"] = email;
+            }
         }
         catch (SecurityTokenException)
         {
-            context.Response.StatusCode = 401; // Unauthorized
-            await context.Response.WriteAsync("Invalid token.");
-            return;
+            // do nothing if jwt validation fails
         }
     }
 }
