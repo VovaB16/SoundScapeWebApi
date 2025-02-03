@@ -2,10 +2,14 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using SoundScape.Data;
+using SoundScape.DTOs;
 using SoundScape.Models;
+using SoundScape.Services;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using System.Threading.Tasks;
+
 namespace SoundScape.Controllers
 {
     [ApiController]
@@ -14,11 +18,13 @@ namespace SoundScape.Controllers
     {
         private readonly IConfiguration _configuration;
         private readonly ApplicationDbContext _dbContext;
+        private readonly IEmailService _emailService;
 
-        public AuthController(ApplicationDbContext dbContext, IConfiguration configuration)
+        public AuthController(ApplicationDbContext dbContext, IConfiguration configuration, IEmailService emailService)
         {
             _dbContext = dbContext;
             _configuration = configuration;
+            _emailService = emailService;
         }
 
         [HttpPost("register")]
@@ -34,13 +40,19 @@ namespace SoundScape.Controllers
             {
                 Username = model.Username,
                 Email = model.Email,
-                PasswordHash = hashedPassword
+                PasswordHash = hashedPassword,
+                EmailConfirmed = false
             };
 
             _dbContext.Users.Add(user);
             await _dbContext.SaveChangesAsync();
 
-            return Ok(new { Message = "Реєстрація успішна.", Email = user.Email });
+            var token = GenerateEmailConfirmationToken(user);
+            var confirmationLink = Url.Action("ConfirmEmail", "Auth", new { token }, Request.Scheme);
+
+            await _emailService.SendEmailAsync(user.Email, "Email Confirmation", $"Please confirm your email using this link: {confirmationLink}");
+
+            return Ok("Реєстрація успішна. Будь ласка, підтвердіть вашу електронну пошту.");
         }
 
         [HttpPost("login")]
@@ -52,8 +64,62 @@ namespace SoundScape.Controllers
                 return Unauthorized("Невірний логін або пароль.");
             }
 
+            if (!user.EmailConfirmed)
+            {
+                return Unauthorized("Електронна пошта не підтверджена.");
+            }
+
             var token = GenerateJwtToken(user);
             return Ok(new { Token = token });
+        }
+
+        [HttpPost("request-password-reset")]
+        public async Task<IActionResult> RequestPasswordReset([FromBody] PasswordResetRequestDto model)
+        {
+            var user = _dbContext.Users.FirstOrDefault(u => u.Email == model.Email);
+            if (user == null)
+            {
+                return BadRequest("Користувача з таким емейлом не знайдено.");
+            }
+
+            var token = GeneratePasswordResetToken(user);
+            var resetLink = Url.Action("ResetPassword", "Auth", new { token }, Request.Scheme);
+
+            await _emailService.SendEmailAsync(user.Email, "Password Reset", $"Please reset your password using this link: {resetLink}");
+
+            return Ok("Посилання для скидання пароля надіслано на вашу електронну пошту.");
+        }
+
+        [HttpPost("reset-password")]
+        public async Task<IActionResult> ResetPassword([FromBody] PasswordResetDto model)
+        {
+            var user = ValidatePasswordResetToken(model.Token);
+            if (user == null)
+            {
+                return BadRequest("Невірний або прострочений токен.");
+            }
+
+            user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.NewPassword);
+            _dbContext.Users.Update(user);
+            await _dbContext.SaveChangesAsync();
+
+            return Ok("Пароль успішно змінено.");
+        }
+
+        [HttpGet("confirm-email")]
+        public async Task<IActionResult> ConfirmEmail(string token)
+        {
+            var user = ValidateEmailConfirmationToken(token);
+            if (user == null)
+            {
+                return BadRequest("Невірний або прострочений токен.");
+            }
+
+            user.EmailConfirmed = true;
+            _dbContext.Users.Update(user);
+            await _dbContext.SaveChangesAsync();
+
+            return Ok("Електронна пошта успішно підтверджена.");
         }
 
         private string GenerateJwtToken(User user)
@@ -64,11 +130,11 @@ namespace SoundScape.Controllers
 
             var claims = new[]
             {
-        new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
-        new Claim(JwtRegisteredClaimNames.UniqueName, user.Username),
-        new Claim(JwtRegisteredClaimNames.Email, user.Email),
-        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-    };
+                new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
+                new Claim(JwtRegisteredClaimNames.UniqueName, user.Username),
+                new Claim(JwtRegisteredClaimNames.Email, user.Email),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+            };
 
             var token = new JwtSecurityToken(
                 issuer: _configuration["Jwt:Issuer"],
@@ -81,5 +147,104 @@ namespace SoundScape.Controllers
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
+        private string GenerateEmailConfirmationToken(User user)
+        {
+            var secretKey = _configuration["Jwt:Key"];
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+            var claims = new[]
+            {
+                new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
+                new Claim(JwtRegisteredClaimNames.Email, user.Email),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+            };
+
+            var token = new JwtSecurityToken(
+                issuer: _configuration["Jwt:Issuer"],
+                audience: _configuration["Jwt:Audience"],
+                claims: claims,
+                expires: DateTime.UtcNow.AddHours(1),
+                signingCredentials: creds
+            );
+
+            return new JwtSecurityTokenHandler().WriteToken(token);
+        }
+
+        private User ValidateEmailConfirmationToken(string token)
+        {
+            try
+            {
+                var tokenHandler = new JwtSecurityTokenHandler();
+                var key = Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]);
+                tokenHandler.ValidateToken(token, new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                    ClockSkew = TimeSpan.Zero
+                }, out SecurityToken validatedToken);
+
+                var jwtToken = (JwtSecurityToken)validatedToken;
+                var userId = int.Parse(jwtToken.Claims.First(x => x.Type == JwtRegisteredClaimNames.Sub).Value);
+
+                return _dbContext.Users.Find(userId);
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        private string GeneratePasswordResetToken(User user)
+        {
+            var secretKey = _configuration["Jwt:Key"];
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+            var claims = new[]
+            {
+                new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
+                new Claim(JwtRegisteredClaimNames.Email, user.Email),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+            };
+
+            var token = new JwtSecurityToken(
+                issuer: _configuration["Jwt:Issuer"],
+                audience: _configuration["Jwt:Audience"],
+                claims: claims,
+                expires: DateTime.UtcNow.AddHours(1),
+                signingCredentials: creds
+            );
+
+            return new JwtSecurityTokenHandler().WriteToken(token);
+        }
+
+        private User ValidatePasswordResetToken(string token)
+        {
+            try
+            {
+                var tokenHandler = new JwtSecurityTokenHandler();
+                var key = Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]);
+                tokenHandler.ValidateToken(token, new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                    ClockSkew = TimeSpan.Zero
+                }, out SecurityToken validatedToken);
+
+                var jwtToken = (JwtSecurityToken)validatedToken;
+                var userId = int.Parse(jwtToken.Claims.First(x => x.Type == JwtRegisteredClaimNames.Sub).Value);
+
+                return _dbContext.Users.Find(userId);
+            }
+            catch
+            {
+                return null;
+            }
+        }
     }
 }
