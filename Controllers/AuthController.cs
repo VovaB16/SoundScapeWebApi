@@ -83,12 +83,13 @@ namespace SoundScape.Controllers
             }
 
             var token = GeneratePasswordResetToken(user);
-            var resetLink = Url.Action("ResetPassword", "Auth", new { token }, Request.Scheme);
+            var resetLink = $"https://localhost:3000/reset-password?token={token}";
 
-            await _emailService.SendEmailAsync(user.Email, "Password Reset", $"Please reset your password using this link: {resetLink}");
+            await _emailService.SendEmailAsync(user.Email, "Password Reset", $"Please reset your password by clicking here: <a href='{resetLink}'>link</a>");
 
             return Ok("Посилання для скидання пароля надіслано на вашу електронну пошту.");
         }
+
 
         [HttpPost("reset-password")]
         public async Task<IActionResult> ResetPassword([FromBody] PasswordResetDto model)
