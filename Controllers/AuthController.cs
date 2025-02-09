@@ -41,6 +41,9 @@ namespace SoundScape.Controllers
                 Username = model.Username,
                 Email = model.Email,
                 PasswordHash = hashedPassword,
+                BirthDay = model.BirthDay,
+                BirthMonth = model.BirthMonth,
+                BirthYear = model.BirthYear,
                 EmailConfirmed = false
             };
 
@@ -83,7 +86,7 @@ namespace SoundScape.Controllers
             }
 
             var token = GeneratePasswordResetToken(user);
-            var resetLink = $"https://localhost:3000/reset-password?token={token}";
+            var resetLink = $"https://localhost:7179/reset-password?token={token}";
 
             await _emailService.SendEmailAsync(user.Email, "Password Reset", $"Please reset your password by clicking here: <a href='{resetLink}'>link</a>");
 
