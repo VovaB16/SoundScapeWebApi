@@ -4,12 +4,15 @@ using SoundScape.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
+using SoundScape.DTOs;
+using System.Security.Claims;
 
 namespace SoundScape.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class PlaylistsController : ControllerBase
+    public class PlaylistsController : Controller
     {
         private readonly ApplicationDbContext _context;
 
@@ -19,19 +22,23 @@ namespace SoundScape.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreatePlaylist([FromBody] Playlist playlist)
+        [Authorize]
+        public async Task<IActionResult> CreatePlaylist([FromBody] CreatePlaylistDto createPlaylistDto)
         {
-            if (playlist == null)
-            {
-                return BadRequest("Playlist is null.");
-            }
+            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
 
-            playlist.CreationDate = DateTime.SpecifyKind(playlist.CreationDate, DateTimeKind.Utc);
+            var playlist = new Playlist
+            {
+                Name = createPlaylistDto.Name,
+                Description = createPlaylistDto.Description,
+                CreationDate = DateTime.UtcNow,
+                OwnerId = userId
+            };
 
             _context.Playlists.Add(playlist);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetPlaylistById), new { id = playlist.Id }, playlist);
+            return Ok(playlist);
         }
 
 

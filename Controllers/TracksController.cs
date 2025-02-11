@@ -7,7 +7,7 @@ namespace SoundScape.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class TracksController : ControllerBase
+    public class TracksController : Controller
     {
         private readonly ApplicationDbContext _dbContext;
 

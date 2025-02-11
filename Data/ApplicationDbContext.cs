@@ -28,5 +28,7 @@ namespace SoundScape.Data
         public DbSet<Track> MusicTracks { get; set; }
         public DbSet<Playlist> Playlists { get; set; }
         public DbSet<PlaylistTrack> PlaylistTracks { get; set; }
+        public DbSet<Artist> Artists { get; set; }
+        public DbSet<ArtistPopularity> ArtistPopularities { get; set; }
     }
 }

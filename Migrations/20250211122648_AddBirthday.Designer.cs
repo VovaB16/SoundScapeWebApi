@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using SoundScape.Data;
@@ -11,9 +12,11 @@ using SoundScape.Data;
 namespace SoundScape.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250211122648_AddBirthday")]
+    partial class AddBirthday
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -35,51 +38,6 @@ namespace SoundScape.Migrations
                     b.HasIndex("TrackId");
 
                     b.ToTable("PlaylistTracks");
-                });
-
-            modelBuilder.Entity("SoundScape.Models.Artist", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("ImageUrl")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Artists");
-                });
-
-            modelBuilder.Entity("SoundScape.Models.ArtistPopularity", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("ArtistId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("Likes")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("Listens")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ArtistId");
-
-                    b.ToTable("ArtistPopularities");
                 });
 
             modelBuilder.Entity("SoundScape.Models.Playlist", b =>
@@ -207,17 +165,6 @@ namespace SoundScape.Migrations
                     b.Navigation("Track");
                 });
 
-            modelBuilder.Entity("SoundScape.Models.ArtistPopularity", b =>
-                {
-                    b.HasOne("SoundScape.Models.Artist", "Artist")
-                        .WithMany("ArtistPopularities")
-                        .HasForeignKey("ArtistId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Artist");
-                });
-
             modelBuilder.Entity("SoundScape.Models.Playlist", b =>
                 {
                     b.HasOne("SoundScape.Models.User", "Owner")
@@ -227,11 +174,6 @@ namespace SoundScape.Migrations
                         .IsRequired();
 
                     b.Navigation("Owner");
-                });
-
-            modelBuilder.Entity("SoundScape.Models.Artist", b =>
-                {
-                    b.Navigation("ArtistPopularities");
                 });
 
             modelBuilder.Entity("SoundScape.Models.Playlist", b =>
