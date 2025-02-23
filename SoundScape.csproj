@@ -23,7 +23,28 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Views\images\" />
+    <Folder Include="wwwroot\images\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\images\ava_example.svg" />
+    <None Include="wwwroot\images\icons_main-content\icon_add.svg" />
+    <None Include="wwwroot\images\icons_main-content\icon_favourite-songs.svg" />
+    <None Include="wwwroot\images\icons_main-content\icon_home.svg" />
+    <None Include="wwwroot\images\icons_main-content\icon_increase-payback.svg" />
+    <None Include="wwwroot\images\icons_main-content\icon_library.svg" />
+    <None Include="wwwroot\images\icons_main-content\icon_menu.svg" />
+    <None Include="wwwroot\images\icons_main-content\icon_messages.svg" />
+    <None Include="wwwroot\images\icons_main-content\icon_microphone.svg" />
+    <None Include="wwwroot\images\icons_main-content\icon_minimize-payback.svg" />
+    <None Include="wwwroot\images\icons_main-content\icon_play-music.svg" />
+    <None Include="wwwroot\images\icons_main-content\icon_search.svg" />
+    <None Include="wwwroot\images\icons_main-content\icon_shuffle.svg" />
+    <None Include="wwwroot\images\icons_main-content\icon_skip-back.svg" />
+    <None Include="wwwroot\images\icons_main-content\icon_skip-next.svg" />
+    <None Include="wwwroot\images\icons_main-content\icon_unshuffle.svg" />
+    <None Include="wwwroot\images\icons_main-content\icon_volume.svg" />
+    <None Include="wwwroot\images\logo.png" />
   </ItemGroup>
 
 </Project>
