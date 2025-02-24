@@ -12,5 +12,6 @@ namespace SoundScape.Models
         public string Duration { get; set; }
         public string FilePath { get; set; }
         public DateTime UploadDate { get; set; }
+        public string ImageUrl { get; set; }
     }
 }

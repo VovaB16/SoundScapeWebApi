@@ -13,7 +13,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowReactApp",
         builder =>
         {
-            builder.WithOrigins("http://localhost:3000")
+            builder.WithOrigins("http://localhost:5173")
                    .AllowAnyHeader()
                    .AllowAnyMethod();
         });
@@ -54,11 +54,12 @@ using (var scope = app.Services.CreateScope())
     var services = scope.ServiceProvider;
     try
     {
-        Seeder.SeedTracks(services);
+        Seeder.SeedAlbum(services);
+        Console.WriteLine("Database seeding completed.");
     }
     catch (Exception ex)
     {
-        Console.WriteLine(ex.Message);
+        Console.WriteLine($"An error occurred while seeding the database: {ex.Message}");
     }
 }
 

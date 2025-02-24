@@ -31,5 +31,6 @@ namespace SoundScape.Data
         public DbSet<Album> Albums { get; set; }
         public DbSet<Artist> Artists { get; set; }
         public DbSet<ArtistPopularity> ArtistPopularities { get; set; }
+        public DbSet<Single> Singles { get; set; }
     }
 }

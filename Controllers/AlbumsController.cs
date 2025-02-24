@@ -41,6 +41,7 @@ namespace SoundScape.Controllers
             {
                 return BadRequest();
             }
+            newAlbum.ReleaseDate = newAlbum.ReleaseDate.ToUniversalTime();
 
             _dbContext.Albums.Add(newAlbum);
             _dbContext.SaveChanges();
@@ -85,6 +86,17 @@ namespace SoundScape.Controllers
             _dbContext.SaveChanges();
 
             return NoContent();
+        }
+
+        [HttpGet("artist/{artistId}")]
+        public IActionResult GetAlbumsByArtist(int artistId)
+        {
+            var albums = _dbContext.Albums.Where(a => a.ArtistId == artistId).ToList();
+            if (albums == null || !albums.Any())
+            {
+                return NotFound();
+            }
+            return Ok(albums);
         }
     }
 }
