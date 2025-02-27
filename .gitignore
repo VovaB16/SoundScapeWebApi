@@ -364,3 +364,4 @@ MigrationBackup/
 FodyWeavers.xsd
 /wwwroot/tracks/testtrack1.mp3
 /wwwroot/tracks/testtrack2.mp3
+/wwwroot/tracks
