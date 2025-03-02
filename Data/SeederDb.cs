@@ -7,6 +7,27 @@ using System.Linq;
 
 public static class Seeder
 {
+    public static void SeedTrack(IServiceProvider serviceProvider)
+    {
+        using (var context = new ApplicationDbContext(serviceProvider.GetRequiredService<DbContextOptions<ApplicationDbContext>>()))
+        {
+            var track = new Track
+            {
+                Title = "Lover",
+                Artist = "Taylor Swift",
+                Album = "Album Name", 
+                Genre = "Chill",
+                Duration = "4:00",
+                FilePath = "/tracks/testtrack2.mp3",
+                UploadDate = DateTime.UtcNow,
+                ImageUrl = "/images/TSF.png"
+            };
+
+            context.MusicTracks.Add(track);
+            context.SaveChanges();
+            Console.WriteLine("Track added successfully.");
+        }
+    }
     public static void SeedAlbum(IServiceProvider serviceProvider)
     {
         using (var context = new ApplicationDbContext(serviceProvider.GetRequiredService<DbContextOptions<ApplicationDbContext>>()))
@@ -65,10 +86,8 @@ public static class Seeder
             var artist = context.Artists.FirstOrDefault(a => a.Id == 13);
             if (artist != null)
             {
-                // Check if there are already singles for this artist
                 if (!context.Singles.Any(s => s.ArtistId == 13))
                 {
-                    // Create 5 singles for the artist with ID 13
                     var singles = new[]
                     {
                         new Single

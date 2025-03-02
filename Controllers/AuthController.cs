@@ -44,33 +44,35 @@ namespace SoundScape.Controllers
                 BirthDay = model.BirthDay,
                 BirthMonth = model.BirthMonth,
                 BirthYear = model.BirthYear,
-                EmailConfirmed = false
+                Gender = model.Gender,
+                EmailConfirmed = true // Set EmailConfirmed to true
             };
 
             _dbContext.Users.Add(user);
             await _dbContext.SaveChangesAsync();
-
+            /*
             var token = GenerateEmailConfirmationToken(user);
             var confirmationLink = Url.Action("ConfirmEmail", "Auth", new { token }, Request.Scheme);
 
             await _emailService.SendEmailAsync(user.Email, "Email Confirmation", $"Please confirm your email using this link: {confirmationLink}");
-
+            */
             return Ok("Реєстрація успішна. Будь ласка, підтвердіть вашу електронну пошту.");
         }
 
         [HttpPost("login")]
         public IActionResult Login([FromBody] LoginDto model)
         {
-            var user = _dbContext.Users.FirstOrDefault(u => u.Username == model.Username);
+            var user = _dbContext.Users.FirstOrDefault(u => u.Email == model.Email);
             if (user == null || !BCrypt.Net.BCrypt.Verify(model.Password, user.PasswordHash))
             {
                 return Unauthorized("Невірний логін або пароль.");
             }
 
+            /* confirmation emeil
             if (!user.EmailConfirmed)
             {
                 return Unauthorized("Електронна пошта не підтверджена.");
-            }
+            }*/
 
             var token = GenerateJwtToken(user);
             return Ok(new { Token = token });
@@ -86,12 +88,13 @@ namespace SoundScape.Controllers
             }
 
             var token = GeneratePasswordResetToken(user);
-            var resetLink = $"https://localhost:7179/reset-password?token={token}";
+            var resetLink = $"http://localhost:5173/forgot-password/NewPassword?token={token}";
 
             await _emailService.SendEmailAsync(user.Email, "Password Reset", $"Please reset your password by clicking here: <a href='{resetLink}'>link</a>");
 
             return Ok("Посилання для скидання пароля надіслано на вашу електронну пошту.");
         }
+
 
 
         [HttpPost("reset-password")]

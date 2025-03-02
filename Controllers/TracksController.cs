@@ -57,5 +57,18 @@ namespace SoundScape.Controllers
             var tracks = query.ToList();
             return Ok(tracks);
         }
+        [HttpDelete("{id}")]
+        public IActionResult DeleteTrack(int id)
+        {
+            var track = _dbContext.MusicTracks.FirstOrDefault(t => t.Id == id);
+            if (track == null)
+            {
+                return NotFound();
+            }
+
+            _dbContext.MusicTracks.Remove(track);
+            _dbContext.SaveChanges();
+            return NoContent();
+        }
     }
 }
