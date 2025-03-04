@@ -11,13 +11,14 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReactApp",
-        builder =>
+        policyBuilder =>
         {
-            builder.WithOrigins("http://localhost:5173")
-                   .AllowAnyHeader()
-                   .AllowAnyMethod();
+            policyBuilder.WithOrigins(builder.Configuration["BaseUrl"])
+                         .AllowAnyHeader()
+                         .AllowAnyMethod();
         });
 });
+
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));

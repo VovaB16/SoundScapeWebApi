@@ -19,12 +19,13 @@ namespace SoundScape.Controllers
         private readonly IConfiguration _configuration;
         private readonly ApplicationDbContext _dbContext;
         private readonly IEmailService _emailService;
-
+        private readonly string _baseUrl;
         public AuthController(ApplicationDbContext dbContext, IConfiguration configuration, IEmailService emailService)
         {
             _dbContext = dbContext;
             _configuration = configuration;
             _emailService = emailService;
+            _baseUrl = _configuration["BaseUrl"];
         }
 
         [HttpPost("register")]
@@ -88,7 +89,8 @@ namespace SoundScape.Controllers
             }
 
             var token = GeneratePasswordResetToken(user);
-            var resetLink = $"http://localhost:5173/forgot-password/NewPassword?token={token}";
+
+            var resetLink = $"{_baseUrl}/forgot-password/NewPassword?token={token}";
 
             await _emailService.SendEmailAsync(user.Email, "Password Reset", $"Please reset your password by clicking here: <a href='{resetLink}'>link</a>");
 
