@@ -19,13 +19,13 @@ namespace SoundScape.Controllers
         private readonly IConfiguration _configuration;
         private readonly ApplicationDbContext _dbContext;
         private readonly IEmailService _emailService;
-        private readonly string _baseUrl;
+        private readonly string _ReactAppUrl;
         public AuthController(ApplicationDbContext dbContext, IConfiguration configuration, IEmailService emailService)
         {
             _dbContext = dbContext;
             _configuration = configuration;
             _emailService = emailService;
-            _baseUrl = _configuration["BaseUrl"];
+            _ReactAppUrl = _configuration["AppSettings:ReactAppUrl"];
         }
 
         [HttpPost("register")]
@@ -46,7 +46,7 @@ namespace SoundScape.Controllers
                 BirthMonth = model.BirthMonth,
                 BirthYear = model.BirthYear,
                 Gender = model.Gender,
-                EmailConfirmed = true // Set EmailConfirmed to true
+                EmailConfirmed = true 
             };
 
             _dbContext.Users.Add(user);
@@ -82,20 +82,23 @@ namespace SoundScape.Controllers
         [HttpPost("request-password-reset")]
         public async Task<IActionResult> RequestPasswordReset([FromBody] PasswordResetRequestDto model)
         {
-            var user = _dbContext.Users.FirstOrDefault(u => u.Email == model.Email);
-            if (user == null)
-            {
-                return BadRequest("Користувача з таким емейлом не знайдено.");
-            }
 
-            var token = GeneratePasswordResetToken(user);
+                var user = _dbContext.Users.FirstOrDefault(u => u.Email == model.Email);
+                if (user == null)
+                {
+                    return BadRequest("Користувача з таким емейлом не знайдено.");
+                }
 
-            var resetLink = $"{_baseUrl}/forgot-password/NewPassword?token={token}";
+                var token = GeneratePasswordResetToken(user);
+                var resetLink = $"{_ReactAppUrl}/forgot-password/NewPassword?token={token}";
 
-            await _emailService.SendEmailAsync(user.Email, "Password Reset", $"Please reset your password by clicking here: <a href='{resetLink}'>link</a>");
+                await _emailService.SendEmailAsync(user.Email, "Password Reset", $"Please reset your password by clicking here: <a href='{resetLink}'>link</a>");
 
-            return Ok("Посилання для скидання пароля надіслано на вашу електронну пошту.");
+                return Ok("Посилання для скидання пароля надіслано на вашу електронну пошту.");
         }
+
+
+
 
 
 

@@ -4,22 +4,24 @@ using Microsoft.IdentityModel.Tokens;
 using SoundScape.Data;
 using SoundScape.Models;
 using SoundScape.Services;
+using System.Net.Mail;
+using System.Net;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
+
+var apiUrl = builder.Configuration.GetValue<string>("AppSettings:ApiUrl");
 
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReactApp",
         policyBuilder =>
         {
-            policyBuilder.WithOrigins(builder.Configuration["BaseUrl"])
+            policyBuilder.WithOrigins(builder.Configuration["AppSettings:ReactAppUrl"])
                          .AllowAnyHeader()
                          .AllowAnyMethod();
         });
 });
-
-
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 

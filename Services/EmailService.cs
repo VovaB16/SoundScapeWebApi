@@ -16,10 +16,12 @@ namespace SoundScape.Services
         public EmailService(IConfiguration configuration)
         {
             _configuration = configuration;
+
         }
 
         public async Task SendEmailAsync(string to, string subject, string body)
         {
+
             var smtpClient = new SmtpClient(_configuration["Smtp:Host"])
             {
                 Port = int.Parse(_configuration["Smtp:Port"]),
@@ -40,5 +42,3 @@ namespace SoundScape.Services
         }
     }
 }
-
-
