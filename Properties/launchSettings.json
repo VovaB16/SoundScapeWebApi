@@ -16,17 +16,15 @@
       "applicationUrl": "http://localhost:5253",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "APP_BASE_URL": "http://localhost:5253"
       }
     },
     "https": {
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": true,
-      "applicationUrl": "https://localhost:7179",
+      "applicationUrl": "https://localhost:7179;https://localhost:5253",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Production",
-        "APP_BASE_URL": "https://myapp.com"
+        "ASPNETCORE_ENVIRONMENT": "Development",
       }
     },
     "IIS Express": {
