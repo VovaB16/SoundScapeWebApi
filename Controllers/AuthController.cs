@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using SoundScape.Data;
@@ -36,6 +37,10 @@ namespace SoundScape.Controllers
                 return BadRequest("Користувач із таким іменем вже існує.");
             }
 
+            if (string.IsNullOrEmpty(model.AvatarUrl))
+            {
+                model.AvatarUrl = "/images/default-avatar.png";
+            }
             var hashedPassword = BCrypt.Net.BCrypt.HashPassword(model.Password);
             var user = new User
             {
@@ -46,9 +51,9 @@ namespace SoundScape.Controllers
                 BirthMonth = model.BirthMonth,
                 BirthYear = model.BirthYear,
                 Gender = model.Gender,
-                EmailConfirmed = true 
+                EmailConfirmed = false
+            
             };
-
             _dbContext.Users.Add(user);
             await _dbContext.SaveChangesAsync();
             /*
@@ -97,11 +102,6 @@ namespace SoundScape.Controllers
                 return Ok("Посилання для скидання пароля надіслано на вашу електронну пошту.");
         }
 
-
-
-
-
-
         [HttpPost("reset-password")]
         public async Task<IActionResult> ResetPassword([FromBody] PasswordResetDto model)
         {
@@ -118,21 +118,48 @@ namespace SoundScape.Controllers
             return Ok("Пароль успішно змінено.");
         }
 
+        [Authorize]
+        [HttpPost("request-email-confirmation")]
+        public async Task<IActionResult> RequestEmailConfirmation()
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (userId == null)
+            {
+                return Unauthorized("User ID not found in claims.");
+            }
+
+            var user = await _dbContext.Users.FindAsync(int.Parse(userId));
+            if (user == null)
+            {
+                return NotFound("User not found.");
+            }
+
+            var token = GenerateEmailConfirmationToken(user);
+            var confirmationLink = Url.Action("ConfirmEmail", "Auth", new { token }, Request.Scheme, Request.Host.ToString());
+
+            await _emailService.SendEmailAsync(user.Email, "Email Confirmation", $"Please confirm your email using this link: <a href='{confirmationLink}'>link</a>");
+
+            return Ok("Confirmation email sent. Please check your email.");
+        }
+
         [HttpGet("confirm-email")]
         public async Task<IActionResult> ConfirmEmail(string token)
         {
             var user = ValidateEmailConfirmationToken(token);
             if (user == null)
             {
-                return BadRequest("Невірний або прострочений токен.");
+                return BadRequest("Invalid or expired token.");
             }
 
             user.EmailConfirmed = true;
             _dbContext.Users.Update(user);
             await _dbContext.SaveChangesAsync();
 
-            return Ok("Електронна пошта успішно підтверджена.");
+            return Ok("Email confirmed successfully.");
         }
+
+
+
 
         private string GenerateJwtToken(User user)
         {
@@ -258,5 +285,6 @@ namespace SoundScape.Controllers
                 return null;
             }
         }
+
     }
 }
