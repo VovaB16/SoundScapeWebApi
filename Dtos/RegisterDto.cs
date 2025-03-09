@@ -9,5 +9,6 @@ namespace SoundScape.Models
         public int BirthMonth { get; set; }
         public int BirthYear { get; set; }
         public string Gender { get; set; }
+        public string AvatarUrl { get; set; } = "/images/default-avatar.png";
     }
 }
