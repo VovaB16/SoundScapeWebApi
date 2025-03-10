@@ -1,6 +1,6 @@
 ﻿namespace SoundScape.DTOs
 {
-    public class CreatePlaylistDto
+    public class UpdatePlaylistDto
     {
         public string Name { get; set; }
         public string Description { get; set; }

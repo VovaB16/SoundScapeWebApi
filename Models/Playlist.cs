@@ -9,5 +9,7 @@
         public User Owner { get; set; }
         public ICollection<PlaylistTrack> PlaylistTracks { get; set; }
         public string Description { get; set; }
+        public string ImageUrl { get; set; } 
+
     }
 }

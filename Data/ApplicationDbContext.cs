@@ -23,6 +23,12 @@ namespace SoundScape.Data
                 .HasOne(pt => pt.Track)
                 .WithMany()
                 .HasForeignKey(pt => pt.TrackId);
+
+            modelBuilder.Entity<User>()
+                .HasMany(u => u.FavoriteTracks)
+                .WithMany(t => t.FavoritedByUsers)
+                .UsingEntity(j => j.ToTable("UserFavoriteTracks"));
+
         }
         public DbSet<User> Users { get; set; }
         public DbSet<Track> MusicTracks { get; set; }

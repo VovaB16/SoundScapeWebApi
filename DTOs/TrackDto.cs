@@ -1,8 +1,6 @@
-﻿using System;
-
-namespace SoundScape.Models
+﻿namespace SoundScape.DTOs
 {
-    public class Track
+    public class TrackDto
     {
         public int Id { get; set; }
         public string Title { get; set; }
@@ -13,8 +11,5 @@ namespace SoundScape.Models
         public string FilePath { get; set; }
         public DateTime UploadDate { get; set; }
         public string ImageUrl { get; set; }
-
-        public ICollection<User> FavoritedByUsers { get; set; }
-
     }
 }

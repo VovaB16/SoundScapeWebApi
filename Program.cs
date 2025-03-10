@@ -7,8 +7,16 @@ using SoundScape.Services;
 using System.Net.Mail;
 using System.Net;
 using System.Text;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
+    });
+
 
 var apiUrl = builder.Configuration.GetValue<string>("AppSettings:ApiUrl");
 

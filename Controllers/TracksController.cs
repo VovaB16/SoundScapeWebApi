@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using SoundScape.Data;
 using SoundScape.Models;
 using System.Linq;
@@ -14,6 +15,13 @@ namespace SoundScape.Controllers
         public TracksController(ApplicationDbContext dbContext)
         {
             _dbContext = dbContext;
+        }
+
+        [HttpGet("all")]
+        public async Task<IActionResult> GetAllTracks()
+        {
+            var tracks = await _dbContext.MusicTracks.ToListAsync();
+            return Ok(tracks);
         }
 
         [HttpGet]
