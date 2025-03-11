@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using SoundScape.Data;
@@ -11,9 +12,11 @@ using SoundScape.Data;
 namespace SoundScape.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250223153720_AddImageForAlbumAndTrack")]
+    partial class AddImageForAlbumAndTrack
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -37,59 +40,13 @@ namespace SoundScape.Migrations
                     b.ToTable("PlaylistTracks");
                 });
 
-            modelBuilder.Entity("Single", b =>
-
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("ArtistId")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Duration")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("FilePath")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Genre")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("ImageUrl")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("ReleaseDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Title")
-
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-
-                    b.HasIndex("ArtistId");
-
-                    b.ToTable("Singles");
-                });
-
             modelBuilder.Entity("SoundScape.Models.Album", b =>
-
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
 
                     b.Property<int>("ArtistId")
                         .HasColumnType("integer");
@@ -102,7 +59,6 @@ namespace SoundScape.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Title")
-
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -170,10 +126,6 @@ namespace SoundScape.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("ImageUrl")
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -248,10 +200,6 @@ namespace SoundScape.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("AvatarUrl")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<int>("BirthDay")
                         .HasColumnType("integer");
 
@@ -268,10 +216,6 @@ namespace SoundScape.Migrations
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("boolean");
 
-                    b.Property<string>("Gender")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<string>("PasswordHash")
                         .IsRequired()
                         .HasColumnType("text");
@@ -283,21 +227,6 @@ namespace SoundScape.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Users");
-                });
-
-            modelBuilder.Entity("TrackUser", b =>
-                {
-                    b.Property<int>("FavoriteTracksId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("FavoritedByUsersId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("FavoriteTracksId", "FavoritedByUsersId");
-
-                    b.HasIndex("FavoritedByUsersId");
-
-                    b.ToTable("UserFavoriteTracks", (string)null);
                 });
 
             modelBuilder.Entity("PlaylistTrack", b =>
@@ -317,17 +246,6 @@ namespace SoundScape.Migrations
                     b.Navigation("Playlist");
 
                     b.Navigation("Track");
-                });
-
-            modelBuilder.Entity("Single", b =>
-                {
-                    b.HasOne("SoundScape.Models.Artist", "Artist")
-                        .WithMany()
-                        .HasForeignKey("ArtistId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Artist");
                 });
 
             modelBuilder.Entity("SoundScape.Models.Album", b =>
@@ -370,21 +288,6 @@ namespace SoundScape.Migrations
                         .HasForeignKey("AlbumId");
                 });
 
-            modelBuilder.Entity("TrackUser", b =>
-                {
-                    b.HasOne("SoundScape.Models.Track", null)
-                        .WithMany()
-                        .HasForeignKey("FavoriteTracksId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("SoundScape.Models.User", null)
-                        .WithMany()
-                        .HasForeignKey("FavoritedByUsersId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("SoundScape.Models.Album", b =>
                 {
                     b.Navigation("Tracks");
@@ -400,7 +303,6 @@ namespace SoundScape.Migrations
             modelBuilder.Entity("SoundScape.Models.Playlist", b =>
                 {
                     b.Navigation("PlaylistTracks");
-
                 });
 #pragma warning restore 612, 618
         }
