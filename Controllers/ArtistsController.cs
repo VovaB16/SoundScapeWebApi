@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SoundScape.Data;
 using SoundScape.DTOs;
 using SoundScape.Models;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace SoundScape.Controllers
@@ -195,6 +197,69 @@ namespace SoundScape.Controllers
             await _context.SaveChangesAsync();
 
             return NoContent();
+        }
+
+        [HttpPost("{artistId}/subscribe")]
+        [Authorize]
+        public async Task<IActionResult> SubscribeToArtist(int artistId)
+        {
+            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var subscription = new Subscription
+            {
+                UserId = userId,
+                ArtistId = artistId
+            };
+
+            _context.Subscriptions.Add(subscription);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = "Subscribed to artist successfully." });
+        }
+
+        [HttpDelete("{artistId}/unsubscribe")]
+        [Authorize]
+        public async Task<IActionResult> UnsubscribeFromArtist(int artistId)
+        {
+            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var subscription = await _context.Subscriptions
+                .FirstOrDefaultAsync(s => s.UserId == userId && s.ArtistId == artistId);
+
+            if (subscription == null)
+            {
+                return NotFound(new { message = "Subscription not found." });
+            }
+
+            _context.Subscriptions.Remove(subscription);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = "Unsubscribed from artist successfully." });
+        }
+
+        [HttpGet("subscriptions")]
+        [Authorize]
+        public async Task<IActionResult> GetUserSubscriptions()
+        {
+            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var subscriptions = await _context.Subscriptions
+                .Where(s => s.UserId == userId)
+                .Select(s => new {
+                    s.Artist.Id,
+                    s.Artist.Name,
+                    s.Artist.ImageUrl
+                })
+                .ToListAsync();
+
+            return Ok(subscriptions);
+        }
+        [HttpGet("{artistId}/isSubscribed")]
+        [Authorize]
+        public async Task<IActionResult> IsUserSubscribed(int artistId)
+        {
+            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var isSubscribed = await _context.Subscriptions
+                .AnyAsync(s => s.UserId == userId && s.ArtistId == artistId);
+
+            return Ok(new { isSubscribed });
         }
     }
 }

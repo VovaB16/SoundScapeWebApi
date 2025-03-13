@@ -29,7 +29,20 @@ namespace SoundScape.Data
                 .WithMany(t => t.FavoritedByUsers)
                 .UsingEntity(j => j.ToTable("UserFavoriteTracks"));
 
+            modelBuilder.Entity<Subscription>()
+                .HasKey(s => new { s.UserId, s.ArtistId });
+
+            modelBuilder.Entity<Subscription>()
+                .HasOne(s => s.User)
+                .WithMany(u => u.Subscriptions)
+                .HasForeignKey(s => s.UserId);
+
+            modelBuilder.Entity<Subscription>()
+                .HasOne(s => s.Artist)
+                .WithMany(a => a.Subscribers)
+                .HasForeignKey(s => s.ArtistId);
         }
+
         public DbSet<User> Users { get; set; }
         public DbSet<Track> MusicTracks { get; set; }
         public DbSet<Playlist> Playlists { get; set; }
@@ -38,5 +51,8 @@ namespace SoundScape.Data
         public DbSet<Artist> Artists { get; set; }
         public DbSet<ArtistPopularity> ArtistPopularities { get; set; }
         public DbSet<Single> Singles { get; set; }
+        public DbSet<Subscription> Subscriptions { get; set; }
+
+
     }
 }
