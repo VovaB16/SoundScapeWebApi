@@ -137,10 +137,13 @@ public static class Seeder
         using (var context = new ApplicationDbContext(serviceProvider.GetRequiredService<DbContextOptions<ApplicationDbContext>>()))
         {
 
+            if (!context.MusicTracks.Any())
+            {
                 var tracks = new[]
                 {
+                    
 
-                //Drake
+            //Drake
                 new Track
                 {
                     Title = "Drake 9",
@@ -159,7 +162,7 @@ public static class Seeder
                     Album = "When We All Fall Asleep, Where Do We Go?",
                     Genre = "Electropop",
                     Duration = "3:14",
-                    FilePath = "/tracks/Drake-Childs Play.mp3",
+                    FilePath = "/tracks/Drake-ChildsPlay.mp3",
                     UploadDate = DateTime.UtcNow,
                     ImageUrl = "/images/drake.png"
                 },
@@ -413,12 +416,19 @@ public static class Seeder
                     UploadDate = DateTime.UtcNow,
                     ImageUrl = "/images/TaylorSwift.jpg"
                 }
+
             };
+
 
                 context.MusicTracks.AddRange(tracks);
                 context.SaveChanges();
                 Console.WriteLine("Tracks added successfully.");
+            }
+            else
+            {
+                Console.WriteLine("Tracks already exist in the database.");
 
+            }
         }
     }
 

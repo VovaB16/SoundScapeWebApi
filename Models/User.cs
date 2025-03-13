@@ -1,3 +1,4 @@
+
 namespace SoundScape.Models
 {
     public class User
