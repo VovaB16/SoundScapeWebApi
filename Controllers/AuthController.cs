@@ -32,10 +32,6 @@ namespace SoundScape.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterDto model)
         {
-            if (_dbContext.Users.Any(u => u.Username == model.Username))
-            {
-                return BadRequest("Користувач із таким іменем вже існує.");
-            }
 
             if (string.IsNullOrEmpty(model.AvatarUrl))
             {

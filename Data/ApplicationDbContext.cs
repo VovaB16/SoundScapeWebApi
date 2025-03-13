@@ -21,8 +21,9 @@ namespace SoundScape.Data
         public DbSet<Artist> Artists { get; set; }
         public DbSet<ArtistPopularity> ArtistPopularities { get; set; }
         public DbSet<Single> Singles { get; set; }
-        public DbSet<Order> Orders { get; set; }
-        public DbSet<Product> Products { get; set; }
+
+        public DbSet<Subscription> Subscriptions { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -46,15 +47,19 @@ namespace SoundScape.Data
                 .WithMany(t => t.FavoritedByUsers)
                 .UsingEntity(j => j.ToTable("UserFavoriteTracks"));
 
-            modelBuilder.Entity<Order>()
-                .HasOne(o => o.User)
-                .WithMany(u => u.Orders)
-                .HasForeignKey(o => o.UserId);
 
-            modelBuilder.Entity<Order>()
-                .HasMany(o => o.Products)
-                .WithMany(p => p.Orders)
-                .UsingEntity(j => j.ToTable("OrderProducts"));
+            modelBuilder.Entity<Subscription>()
+                .HasKey(s => new { s.UserId, s.ArtistId });
+
+            modelBuilder.Entity<Subscription>()
+                .HasOne(s => s.User)
+                .WithMany(u => u.Subscriptions)
+                .HasForeignKey(s => s.UserId);
+
+            modelBuilder.Entity<Subscription>()
+                .HasOne(s => s.Artist)
+                .WithMany(a => a.Subscribers)
+                .HasForeignKey(s => s.ArtistId);
         }
     }
 
@@ -69,5 +74,7 @@ namespace SoundScape.Data
             FirstName = firstName;
             LastName = lastName;
         }
+
+
     }
 }

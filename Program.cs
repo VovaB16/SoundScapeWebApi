@@ -77,7 +77,10 @@ using (var scope = app.Services.CreateScope())
     var services = scope.ServiceProvider;
     try
     {
-        Seeder.SeedAlbum(services);
+        Seeder.SeedArtists(services);
+        Seeder.SeedAlbumsForAllArtists(services);
+        Seeder.SeedTrack(services);
+        Seeder.SeedSingle(services);
         Console.WriteLine("Database seeding completed.");
     }
     catch (Exception ex)
@@ -85,6 +88,7 @@ using (var scope = app.Services.CreateScope())
         Console.WriteLine($"An error occurred while seeding the database: {ex.Message}");
     }
 }
+
 
 if (!app.Environment.IsDevelopment())
 {

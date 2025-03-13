@@ -7,5 +7,7 @@
         public string ImageUrl { get; set; }
         public ICollection<Album> Albums { get; set; }
         public ICollection<ArtistPopularity> ArtistPopularities { get; set; }
+
+        public ICollection<Subscription> Subscribers { get; set; } 
     }
 }
