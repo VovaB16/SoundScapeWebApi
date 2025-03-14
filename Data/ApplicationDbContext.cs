@@ -6,7 +6,7 @@ using SoundScape.Models;
 
 namespace SoundScape.Data
 {
-    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
+    public class ApplicationDbContext : DbContext
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
@@ -61,20 +61,5 @@ namespace SoundScape.Data
                 .WithMany(a => a.Subscribers)
                 .HasForeignKey(s => s.ArtistId);
         }
-    }
-
-    public class ApplicationUser : IdentityUser
-    {
-        public string? FirstName { get; set; }
-        public string? LastName { get; set; }
-        public DateTime YearsOld { get; set; }
-
-        public ApplicationUser(string firstName, string lastName)
-        {
-            FirstName = firstName;
-            LastName = lastName;
-        }
-
-
     }
 }
