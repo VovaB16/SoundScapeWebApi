@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -28,6 +31,76 @@ namespace SoundScape.Controllers
             _emailService = emailService;
             _ReactAppUrl = _configuration["AppSettings:ReactAppUrl"];
         }
+
+
+        [HttpGet("google/login")]
+        public IActionResult GoogleLogin()
+        {
+            var state = Guid.NewGuid().ToString();
+            HttpContext.Session.SetString("google_oauth_state", state);
+
+            var properties = new AuthenticationProperties
+            {
+                RedirectUri = "http://localhost:7179/api/google/callback",
+                Items = { { "state", state } }
+            };
+
+            return Challenge(properties, GoogleDefaults.AuthenticationScheme);
+        }
+
+        [HttpGet("google/callback")]
+        public async Task<IActionResult> GoogleResponse()
+        {
+            var authenticateResult = await HttpContext.AuthenticateAsync();
+
+            if (!authenticateResult.Succeeded)
+                return BadRequest("Google authentication failed");
+
+            var stateFromQuery = HttpContext.Request.Query["state"];
+            var stateFromSession = HttpContext.Session.GetString("google_oauth_state");
+
+            if (stateFromQuery != stateFromSession)
+            {
+                return BadRequest("Invalid state parameter");
+            }
+
+            var claims = authenticateResult.Principal.Claims;
+            var email = claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+            var name = claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value;
+            var avatar = claims.FirstOrDefault(c => c.Type == "picture")?.Value;
+            var birthday = claims.FirstOrDefault(c => c.Type == "birthdate")?.Value;
+            var gender = claims.FirstOrDefault(c => c.Type == "gender")?.Value;
+
+            if (email == null || name == null)
+            {
+                return BadRequest("Missing user data from Google.");
+            }
+
+            var secretKey = _configuration["Jwt:Key"];
+            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
+
+            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(new[]
+                {
+                new Claim(ClaimTypes.Name, name),
+                new Claim(ClaimTypes.Email, email),
+                new Claim("Avatar", avatar),
+                new Claim("Birthday", birthday),
+                new Claim("Gender", gender),
+            }),
+                Expires = DateTime.Now.AddHours(1),
+                SigningCredentials = credentials
+            };
+
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            var jwtToken = tokenHandler.WriteToken(token);
+
+            return Redirect($"http://localhost:5173/google-success?token={jwtToken}&name={name}&avatar={avatar}&birthday={birthday}&gender={gender}");
+        }
+
 
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterDto model)

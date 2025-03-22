@@ -153,7 +153,7 @@ public static class Seeder
                     Duration = "3:20",
                     FilePath = "/tracks/Drake-9.mp3",
                     UploadDate = DateTime.UtcNow,
-                    ImageUrl = "/images/drake.png"
+                    ImageUrl = "/images/purmn.jpg"
                 },
                 new Track
                 {
@@ -164,7 +164,7 @@ public static class Seeder
                     Duration = "3:14",
                     FilePath = "/tracks/Drake-ChildsPlay.mp3",
                     UploadDate = DateTime.UtcNow,
-                    ImageUrl = "/images/drake.png"
+                    ImageUrl = "/images/twgg.jpg"
                 },
                 new Track
                 {
@@ -175,7 +175,7 @@ public static class Seeder
                     Duration = "3:19",
                     FilePath = "/tracks/Drake-Controlla.mp3",
                     UploadDate = DateTime.UtcNow,
-                    ImageUrl = "/images/drake.png"
+                    ImageUrl = "/images/mus0.jpg"
                 },
                 new Track
                 {
@@ -203,7 +203,7 @@ public static class Seeder
                     Duration = "3:41",
                     FilePath = "/tracks/BillieEilishbadguy.mp3",
                     UploadDate = DateTime.UtcNow,
-                    ImageUrl = "/images/Billie-Eilish.jpg"
+                    ImageUrl = "/images/Billieqw.jpg"
                 },
                 new Track
                 {
@@ -214,7 +214,7 @@ public static class Seeder
                     Duration = "3:20",
                     FilePath = "/tracks/BillieEilishBored.mp3",
                     UploadDate = DateTime.UtcNow,
-                    ImageUrl = "/images/Billie-Eilish.jpg"
+                    ImageUrl = "/images/gettyi.jpg"
                 },
                 new Track
                 {
@@ -225,7 +225,7 @@ public static class Seeder
                     Duration = "3:14",
                     FilePath = "/tracks/BillieEilishhostage.mp3",
                     UploadDate = DateTime.UtcNow,
-                    ImageUrl = "/images/Billie-Eilish.jpg"
+                    ImageUrl = "/images/gettq.jpg"
                 },
                 new Track
                 {
@@ -236,7 +236,7 @@ public static class Seeder
                     Duration = "3:19",
                     FilePath = "/tracks/BillieEilishKhalidlovely.mp3",
                     UploadDate = DateTime.UtcNow,
-                    ImageUrl = "/images/Billie-Eilish.jpg"
+                    ImageUrl = "/images/gettyi12.jpg"
                 },
                 new Track
                 {
@@ -247,7 +247,7 @@ public static class Seeder
                     Duration = "3:25",
                     FilePath = "/tracks/BillieEilishNoTimeToDie.mp3",
                     UploadDate = DateTime.UtcNow,
-                   ImageUrl = "/images/Billie-Eilish.jpg"
+                   ImageUrl = "/images/ge2.jpg"
                 },
                 new Track
                 {
@@ -274,7 +274,7 @@ public static class Seeder
                     Duration = "3:41",
                     FilePath = "/tracks/BadBunny-Amorfoda.mp3",
                     UploadDate = DateTime.UtcNow,
-                    ImageUrl = "/images/BadBunny.jpg"
+                    ImageUrl = "/images/mus0.jpg"
                 },
                 new Track
                 {
@@ -285,7 +285,7 @@ public static class Seeder
                     Duration = "3:20",
                     FilePath = "/tracks/Bad_Bunny_Tainy-Callaita.mp3",
                     UploadDate = DateTime.UtcNow,
-                    ImageUrl = "/images/BadBunny.jpg"
+                    ImageUrl = "/images/w88p3.jpg"
                 },
                 new Track
                 {
@@ -312,7 +312,7 @@ public static class Seeder
                     Duration = "3:41",
                     FilePath = "/tracks/TheWeeknd-Montreal.mp3",
                     UploadDate = DateTime.UtcNow,
-                    ImageUrl = "/images/The_Weekend.png"
+                    ImageUrl = "/images/0209.jpg"
                 },
                 new Track
                 {
@@ -323,7 +323,7 @@ public static class Seeder
                     Duration = "3:20",
                     FilePath = "/tracks/TheWeeknd-The Knowing.mp3",
                     UploadDate = DateTime.UtcNow,
-                    ImageUrl = "/images/The_Weekend.png"
+                    ImageUrl = "/images/60076.jpg"
                 },
                 new Track
                 {
@@ -334,7 +334,7 @@ public static class Seeder
                     Duration = "3:14",
                     FilePath = "/tracks/TheWeeknd-TheMorning.mp3",
                     UploadDate = DateTime.UtcNow,
-                    ImageUrl = "/images/The_Weekend.png"
+                    ImageUrl = "/images/60284.jpg"
                 },
                 new Track
                 {
@@ -345,7 +345,7 @@ public static class Seeder
                     Duration = "3:19",
                     FilePath = "/tracks/TheWeeknd-TheZoneft.Drake.mp3",
                     UploadDate = DateTime.UtcNow,
-                    ImageUrl = "/images/The_Weekend.png"
+                    ImageUrl = "/images/60032.jpg"
                 },
                 new Track
                 {
@@ -370,7 +370,7 @@ public static class Seeder
                     Duration = "3:41",
                     FilePath = "/tracks/TaylorSwiftThinkHeKnows.mp3",
                     UploadDate = DateTime.UtcNow,
-                    ImageUrl = "/images/TaylorSwift.jpg"
+                    ImageUrl = "/images/TSF1.png"
                 },
                 new Track
                 {
@@ -381,7 +381,7 @@ public static class Seeder
                     Duration = "3:20",
                     FilePath = "/tracks/TaylorSwift_You're_Not_Sorry.mp3",
                     UploadDate = DateTime.UtcNow,
-                    ImageUrl = "/images/TaylorSwift.jpg"
+                    ImageUrl = "/images/ALTSF.png"
                 },
                 new Track
                 {
@@ -392,7 +392,7 @@ public static class Seeder
                     Duration = "3:14",
                     FilePath = "/tracks/TaylorSwiftChange.mp3",
                     UploadDate = DateTime.UtcNow,
-                    ImageUrl = "/images/TaylorSwift.jpg"
+                    ImageUrl = "/images/ALTSE.png"
                 },
                 new Track
                 {
@@ -403,7 +403,7 @@ public static class Seeder
                     Duration = "3:19",
                     FilePath = "/tracks/TaylorSwiftDelicate.mp3",
                     UploadDate = DateTime.UtcNow,
-                    ImageUrl = "/images/TaylorSwift.jpg"
+                    ImageUrl = "/images/ALTSM.png"
                 },
                 new Track
                 {
