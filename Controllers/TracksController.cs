@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SoundScape.Data;
 using SoundScape.Models;
+using System.Diagnostics;
 using System.Linq;
 
 namespace SoundScape.Controllers
@@ -78,5 +80,54 @@ namespace SoundScape.Controllers
             _dbContext.SaveChanges();
             return NoContent();
         }
+
+
+
+        [Authorize(Roles = "Admin")]
+        [HttpPost("add-track")]
+        public async Task<IActionResult> AddTrack([FromForm] string title, [FromForm] IFormFile trackFile, [FromForm] IFormFile imageFile)
+        {
+            if (trackFile == null || imageFile == null)
+            {
+                return BadRequest("Track file and image file are required.");
+            }
+
+            var webRootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+
+            var trackFileName = $"{Guid.NewGuid()}{Path.GetExtension(trackFile.FileName)}";
+            var imageFileName = $"{Guid.NewGuid()}{Path.GetExtension(imageFile.FileName)}";
+
+            var trackFilePath = Path.Combine(webRootPath, "tracks", trackFileName);
+            var imageFilePath = Path.Combine(webRootPath, "images", imageFileName);
+
+            await using (var trackStream = new FileStream(trackFilePath, FileMode.Create))
+            {
+                await trackFile.CopyToAsync(trackStream);
+            }
+
+            await using (var imageStream = new FileStream(imageFilePath, FileMode.Create))
+            {
+                await imageFile.CopyToAsync(imageStream);
+            }
+
+
+            var track = new Track
+            {
+                Title = title,
+                FilePath = $"/tracks/{trackFileName}",
+                ImageUrl = $"/images/{imageFileName}", 
+                UploadDate = DateTime.UtcNow,
+                Artist = "Admin",
+                Album = "Admin",
+                Genre = "Admin",
+                Duration = "2"
+            };
+
+            _dbContext.MusicTracks.Add(track);
+            await _dbContext.SaveChangesAsync();
+
+            return Ok(new { message = "Track added successfully.", track });
+        }
+
     }
 }

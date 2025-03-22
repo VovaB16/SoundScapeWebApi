@@ -16,6 +16,6 @@ namespace SoundScape.Models
         public ICollection<Track> FavoriteTracks { get; set; }
         public ICollection<Subscription> Subscriptions { get; set; }
 
-
+        public string Role { get; set; }
     }
 }

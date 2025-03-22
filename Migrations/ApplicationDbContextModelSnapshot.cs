@@ -34,7 +34,7 @@ namespace SoundScape.Migrations
 
                     b.HasIndex("TrackId");
 
-                    b.ToTable("PlaylistTracks", (string)null);
+                    b.ToTable("PlaylistTracks");
                 });
 
             modelBuilder.Entity("Single", b =>
@@ -75,7 +75,7 @@ namespace SoundScape.Migrations
 
                     b.HasIndex("ArtistId");
 
-                    b.ToTable("Singles", (string)null);
+                    b.ToTable("Singles");
                 });
 
             modelBuilder.Entity("SoundScape.Models.Album", b =>
@@ -104,7 +104,7 @@ namespace SoundScape.Migrations
 
                     b.HasIndex("ArtistId");
 
-                    b.ToTable("Albums", (string)null);
+                    b.ToTable("Albums");
                 });
 
             modelBuilder.Entity("SoundScape.Models.Artist", b =>
@@ -125,7 +125,7 @@ namespace SoundScape.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Artists", (string)null);
+                    b.ToTable("Artists");
                 });
 
             modelBuilder.Entity("SoundScape.Models.ArtistPopularity", b =>
@@ -149,7 +149,7 @@ namespace SoundScape.Migrations
 
                     b.HasIndex("ArtistId");
 
-                    b.ToTable("ArtistPopularities", (string)null);
+                    b.ToTable("ArtistPopularities");
                 });
 
             modelBuilder.Entity("SoundScape.Models.Playlist", b =>
@@ -182,7 +182,7 @@ namespace SoundScape.Migrations
 
                     b.HasIndex("OwnerId");
 
-                    b.ToTable("Playlists", (string)null);
+                    b.ToTable("Playlists");
                 });
 
             modelBuilder.Entity("SoundScape.Models.Subscription", b =>
@@ -197,7 +197,7 @@ namespace SoundScape.Migrations
 
                     b.HasIndex("ArtistId");
 
-                    b.ToTable("Subscriptions", (string)null);
+                    b.ToTable("Subscriptions");
                 });
 
             modelBuilder.Entity("SoundScape.Models.Track", b =>
@@ -246,7 +246,7 @@ namespace SoundScape.Migrations
 
                     b.HasIndex("AlbumId");
 
-                    b.ToTable("MusicTracks", (string)null);
+                    b.ToTable("MusicTracks");
                 });
 
             modelBuilder.Entity("SoundScape.Models.User", b =>
@@ -285,13 +285,33 @@ namespace SoundScape.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<string>("Username")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("Users");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 2,
+                            AvatarUrl = "default_avatar_url",
+                            BirthDay = 1,
+                            BirthMonth = 1,
+                            BirthYear = 2000,
+                            Email = "admin@gmail.com",
+                            EmailConfirmed = true,
+                            Gender = "Other",
+                            PasswordHash = "$2a$11$uvvUDzAYE8lerlmXzRmc3.CbNvJUiXEtawg.iNNcme3zmeepVZsJW",
+                            Role = "Admin",
+                            Username = "admin"
+                        });
                 });
 
             modelBuilder.Entity("TrackUser", b =>

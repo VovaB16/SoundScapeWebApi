@@ -70,6 +70,11 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("AdminPolicy", policy => policy.RequireRole("Admin"));
+});
+
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
@@ -116,3 +121,21 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();
+
+/*
+void SeedAdminUser(ApplicationDbContext _dbContext)
+{
+    if (!_dbContext.Users.Any(u => u.Email == "admin@gmail.com"))
+    {
+        var adminUser = new User
+        {
+            Username = "admin",
+            Email = "admin@gmail.com",
+            PasswordHash = BCrypt.Net.BCrypt.HashPassword("admin123"),
+            EmailConfirmed = true,
+            Role = "Admin"
+        };
+        _dbContext.Users.Add(adminUser);
+        _dbContext.SaveChanges();
+    }
+}*/

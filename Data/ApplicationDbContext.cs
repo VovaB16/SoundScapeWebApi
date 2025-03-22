@@ -27,6 +27,26 @@ namespace SoundScape.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            var hashedPassword = "$2a$11$uvvUDzAYE8lerlmXzRmc3.CbNvJUiXEtawg.iNNcme3zmeepVZsJW";
+
+            modelBuilder.Entity<User>().HasData(
+                 new User
+                 {
+                     Id = 2,
+                     Username = "admin",
+                     Email = "admin@gmail.com",
+                     PasswordHash = hashedPassword,
+                     EmailConfirmed = true,
+                     BirthDay = 1,
+                     BirthMonth = 1,
+                     BirthYear = 2000,
+                     Gender = "Other",
+                     AvatarUrl = "default_avatar_url",
+                     Role = "Admin",
+                 });
+
+
+
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.Entity<PlaylistTrack>()
