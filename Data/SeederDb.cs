@@ -73,6 +73,15 @@ public static class Seeder
     {
         using (var context = new ApplicationDbContext(serviceProvider.GetRequiredService<DbContextOptions<ApplicationDbContext>>()))
         {
+            // Clear existing albums
+            var existingAlbums = context.Albums.ToList();
+            if (existingAlbums.Any())
+            {
+                context.Albums.RemoveRange(existingAlbums);
+                context.SaveChanges();
+                Console.WriteLine("Existing albums cleared.");
+            }
+
             var artists = context.Artists.ToList();
             if (!artists.Any())
             {
@@ -86,42 +95,42 @@ public static class Seeder
                 {
                     var albums = new[]
                     {
-                        new Album
-                        {
-                            Title = $"{artist.Name} Album 1",
-                            ReleaseDate = DateTime.UtcNow,
-                            ArtistId = artist.Id,
-                            ImageUrl = $"/images/{artist.Name.Replace(" ", "_")}_album1.jpg"
-                        },
-                        new Album
-                        {
-                            Title = $"{artist.Name} Album 2",
-                            ReleaseDate = DateTime.UtcNow,
-                            ArtistId = artist.Id,
-                            ImageUrl = $"/images/{artist.Name.Replace(" ", "_")}_album2.jpg"
-                        },
-                        new Album
-                        {
-                            Title = $"{artist.Name} Album 3",
-                            ReleaseDate = DateTime.UtcNow,
-                            ArtistId = artist.Id,
-                            ImageUrl = $"/images/{artist.Name.Replace(" ", "_")}_album3.jpg"
-                        },
-                        new Album
-                        {
-                            Title = $"{artist.Name} Album 4",
-                            ReleaseDate = DateTime.UtcNow,
-                            ArtistId = artist.Id,
-                            ImageUrl = $"/images/{artist.Name.Replace(" ", "_")}_album4.jpg"
-                        },
-                        new Album
-                        {
-                            Title = $"{artist.Name} Album 5",
-                            ReleaseDate = DateTime.UtcNow,
-                            ArtistId = artist.Id,
-                            ImageUrl = $"/images/{artist.Name.Replace(" ", "_")}_album5.jpg"
-                        }
-                    };
+                    new Album
+                    {
+                        Title = "The tortured poets department: the anthology",
+                        ReleaseDate = DateTime.UtcNow,
+                        ArtistId = artist.Id,
+                        ImageUrl = "/images/ALTS1.png"
+                    },
+                    new Album
+                    {
+                        Title = "The tortured poets department",
+                        ReleaseDate = DateTime.UtcNow,
+                        ArtistId = artist.Id,
+                        ImageUrl = "/images/ALTSOD.png"
+                    },
+                    new Album
+                    {
+                        Title = "1989 (Taylor’s Version) [Deluxe]",
+                        ReleaseDate = DateTime.UtcNow,
+                        ArtistId = artist.Id,
+                        ImageUrl = "/images/ALTSS.png"
+                    },
+                    new Album
+                    {
+                        Title = "1989 (Taylor’s Version)",
+                        ReleaseDate = DateTime.UtcNow,
+                        ArtistId = artist.Id,
+                        ImageUrl = "/images/ALTS1.png"
+                    },
+                    new Album
+                    {
+                        Title = "Taylor’s Version)",
+                        ReleaseDate = DateTime.UtcNow,
+                        ArtistId = artist.Id,
+                        ImageUrl = "/images/ALTSOD.png"
+                    }
+                };
 
                     context.Albums.AddRange(albums);
                 }
@@ -131,6 +140,7 @@ public static class Seeder
             Console.WriteLine("Albums added to all artists successfully.");
         }
     }
+
 
     public static void SeedTrack(IServiceProvider serviceProvider)
     {
