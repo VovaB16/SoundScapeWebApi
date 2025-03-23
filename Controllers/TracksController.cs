@@ -110,12 +110,11 @@ namespace SoundScape.Controllers
                 await imageFile.CopyToAsync(imageStream);
             }
 
-
             var track = new Track
             {
                 Title = title,
                 FilePath = $"/tracks/{trackFileName}",
-                ImageUrl = $"/images/{imageFileName}", 
+                ImageUrl = $"/images/{imageFileName}",
                 UploadDate = DateTime.UtcNow,
                 Artist = "Admin",
                 Album = "Admin",
@@ -128,6 +127,7 @@ namespace SoundScape.Controllers
 
             return Ok(new { message = "Track added successfully.", track });
         }
+
 
     }
 }
