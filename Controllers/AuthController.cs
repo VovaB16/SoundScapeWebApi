@@ -120,7 +120,8 @@ namespace SoundScape.Controllers
                 BirthMonth = model.BirthMonth,
                 BirthYear = model.BirthYear,
                 Gender = model.Gender,
-                EmailConfirmed = false
+                EmailConfirmed = false,
+                Role = "User"
             
             };
             _dbContext.Users.Add(user);
