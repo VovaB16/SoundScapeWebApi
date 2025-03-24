@@ -84,7 +84,7 @@ using (var scope = app.Services.CreateScope())
     var dbContext = services.GetRequiredService<ApplicationDbContext>();
     try
     {
-        dbContext.Database.Migrate()
+        dbContext.Database.Migrate();
         Seeder.SeedArtists(services);
         Seeder.SeedAlbumsForAllArtists(services);
         Seeder.SeedTrack(services);
