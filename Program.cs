@@ -79,29 +79,6 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("AdminPolicy", policy => policy.RequireRole("Admin"));
 });
 
-
-
-
-builder.Services.AddOpenTelemetry()
-    .WithTracing(configure =>
-    {
-        configure.UseGrafana()
-            .AddConsoleExporter();
-    })
-    .WithMetrics(configure =>
-    {
-        configure.UseGrafana()
-            .AddConsoleExporter();
-    });
-builder.Logging.AddOpenTelemetry(options =>
-{
-    options.UseGrafana()
-        .AddConsoleExporter();
-});
-
-
-
-
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
