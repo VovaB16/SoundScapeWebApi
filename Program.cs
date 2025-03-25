@@ -10,6 +10,10 @@ using System.Text;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
+using Grafana.OpenTelemetry;
+using OpenTelemetry.Trace;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Logs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -74,6 +78,29 @@ builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("AdminPolicy", policy => policy.RequireRole("Admin"));
 });
+
+
+
+
+builder.Services.AddOpenTelemetry()
+    .WithTracing(configure =>
+    {
+        configure.UseGrafana()
+            .AddConsoleExporter();
+    })
+    .WithMetrics(configure =>
+    {
+        configure.UseGrafana()
+            .AddConsoleExporter();
+    });
+builder.Logging.AddOpenTelemetry(options =>
+{
+    options.UseGrafana()
+        .AddConsoleExporter();
+});
+
+
+
 
 var app = builder.Build();
 
